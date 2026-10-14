@@ -40,7 +40,7 @@ export const defaultContent: SiteContent = {
         availability: 'Open to opportunities',
         photo: '/my_image.png',
         github: 'https://github.com/usama0504',
-        linkedin: '',
+        linkedin: 'https://www.linkedin.com/in/muhammad-usama54/',
     },
     stats: [
         { value: '1+', label: 'Year of professional experience' },
