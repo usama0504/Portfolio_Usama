@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Muhammad Usama — Full Stack Developer</title>
+        <meta
+            name="description"
+            content="Full Stack Developer building scalable, high-performance web applications with Laravel, Vue.js, TypeScript and MySQL."
+        />
+        <meta property="og:title" content="Muhammad Usama — Full Stack Developer" />
+        <meta
+            property="og:description"
+            content="Full Stack Developer building scalable, high-performance web applications with Laravel, Vue.js, TypeScript and MySQL."
+        />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="theme-color" content="#0a1017" />
+
+        <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="%BASE_URL%favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+
+        <link rel="preconnect" href="https://fonts.bunny.net" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.bunny.net/css?family=inter:400,500,600|inter-tight:500,600,700|instrument-serif:400,400i|jetbrains-mono:400,500&display=swap"
+        />
+
+        <!-- Apply the saved / system theme before first paint to avoid a flash. -->
+        <script>
+            (function () {
+                var saved = null;
+                try { saved = localStorage.getItem('appearance'); } catch (e) {}
+                var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.add(dark ? 'dark' : 'light');
+            })();
+        </script>
+        <style>
+            html { background-color: #0a1017; }
+            html.light { background-color: #f4f1ea; }
+        </style>
+    </head>
+    <body class="font-sans antialiased">
+        <div id="app"></div>
+        <script type="module" src="./main.ts"></script>
+    </body>
+</html>

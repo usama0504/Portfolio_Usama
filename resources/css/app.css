@@ -1,0 +1,395 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../js';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        'Inter', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+    --font-display: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    /* ── Portfolio palette (use as bg-paper, text-ink, border-line, text-brand…) ── */
+    --color-paper: var(--folio-paper);
+    --color-paper-2: var(--folio-paper-2);
+    --color-surface: var(--folio-surface);
+    --color-ink: var(--folio-ink);
+    --color-ink-soft: var(--folio-ink-soft);
+    --color-ink-muted: var(--folio-ink-muted);
+    --color-line: var(--folio-line);
+    --color-line-strong: var(--folio-line-strong);
+    --color-brand: var(--folio-brand);
+    --color-brand-ink: var(--folio-brand-ink);
+    --color-inverse: var(--folio-inverse);
+    --color-inverse-ink: var(--folio-inverse-ink);
+    --color-footer: var(--folio-footer);
+    --color-footer-ink: var(--folio-footer-ink);
+    --color-footer-line: var(--folio-footer-line);
+
+    /* ── shadcn tokens (auth / settings pages) ── */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --animate-marquee: marquee 40s linear infinite;
+    --animate-spin-slow: spin 18s linear infinite;
+}
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS — "Midnight Teal"
+   Cool slate + ink + one teal accent.
+   Dark (warm charcoal) is the base; light applies via html.light.
+═══════════════════════════════════════════════════════════════ */
+:root {
+    --folio-paper:       #0a1017;
+    --folio-paper-2:     #0f1721;
+    --folio-surface:     #131d29;
+    --folio-ink:         #e8f0f7;
+    --folio-ink-soft:    #a9b8c6;
+    --folio-ink-muted:   #6b7d8f;
+    --folio-line:        #1f2b38;
+    --folio-line-strong: #2d3c4d;
+    --folio-brand:       #2dd4bf;
+    --folio-brand-ink:   #04201c;
+    --folio-inverse:     #e8f0f7;
+    --folio-inverse-ink: #0a1017;
+    --folio-footer:      #0e1620;
+    --folio-footer-ink:  #e8f0f7;
+    --folio-footer-line: #243142;
+    --folio-marquee-hover: #0d8a7a;
+    --folio-shadow:      0 30px 80px -30px rgb(0 0 0 / 0.7);
+    --folio-ease:        cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* shadcn mapping */
+    --background:         var(--folio-paper);
+    --foreground:         var(--folio-ink);
+    --card:               var(--folio-surface);
+    --card-foreground:    var(--folio-ink);
+    --popover:            var(--folio-surface);
+    --popover-foreground: var(--folio-ink);
+    --primary:            var(--folio-ink);
+    --primary-foreground: var(--folio-paper);
+    --secondary:          var(--folio-paper-2);
+    --secondary-foreground: var(--folio-ink);
+    --muted:              var(--folio-paper-2);
+    --muted-foreground:   var(--folio-ink-muted);
+    --accent:             var(--folio-brand);
+    --accent-foreground:  var(--folio-brand-ink);
+    --destructive:        hsl(0 84% 60%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border:             var(--folio-line);
+    --input:              var(--folio-line);
+    --ring:               var(--folio-brand);
+    --radius:             0.75rem;
+
+    --sidebar-background:           var(--folio-paper);
+    --sidebar-foreground:           var(--folio-ink-soft);
+    --sidebar-primary:              var(--folio-brand);
+    --sidebar-primary-foreground:   var(--folio-brand-ink);
+    --sidebar-accent:               var(--folio-paper-2);
+    --sidebar-accent-foreground:    var(--folio-ink);
+    --sidebar-border:               var(--folio-line);
+    --sidebar-ring:                 var(--folio-brand);
+    --sidebar:                      var(--folio-paper);
+}
+
+html.light {
+    --folio-paper:       #f3f7fa;
+    --folio-paper-2:     #e8eff4;
+    --folio-surface:     #fbfdfe;
+    --folio-ink:         #0e1a24;
+    --folio-ink-soft:    #44566a;
+    --folio-ink-muted:   #6f8294;
+    --folio-line:        #d9e3ea;
+    --folio-line-strong: #c3d1dc;
+    --folio-brand:       #0d8a7a;
+    --folio-brand-ink:   #ffffff;
+    --folio-inverse:     #0e1a24;
+    --folio-inverse-ink: #f3f7fa;
+    --folio-footer:      #0e1a24;
+    --folio-footer-ink:  #f3f7fa;
+    --folio-footer-line: #24323f;
+    --folio-marquee-hover: #2dd4bf;
+    --folio-shadow:      0 30px 70px -35px rgb(15 40 60 / 0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════════════ */
+@layer base {
+    * { @apply border-border outline-ring/50; }
+    html { color-scheme: dark; }
+    html.light { color-scheme: light; }
+    body { @apply bg-background text-foreground antialiased; }
+    ::selection { background: var(--folio-brand); color: var(--folio-brand-ink); }
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}
+
+/* Component classes live in the components layer so Tailwind utilities
+   (bg-*, text-*, p-*) on the same element can override them. */
+@layer components {
+    /* ═══════════════════════════════════════════════════════════════
+       LAYOUT & TYPE
+    ═══════════════════════════════════════════════════════════════ */
+    .folio-container {
+        margin-inline: auto;
+        width: 100%;
+        max-width: 76rem;
+        padding-inline: 1.25rem;
+    }
+    @media (min-width: 768px) {
+        .folio-container { padding-inline: 2.5rem; }
+    }
+
+    .folio-section {
+        position: relative;
+        padding-block: 4.5rem;
+    }
+    @media (min-width: 768px) {
+        .folio-section { padding-block: 6rem; }
+    }
+
+    .folio-display {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.04em;
+        line-height: 0.98;
+    }
+
+    /* Italic serif highlight inside display headings */
+    .folio-em {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        color: var(--folio-brand);
+    }
+
+    .folio-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--folio-ink-muted);
+    }
+    .folio-eyebrow::before {
+        content: '';
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 999px;
+        background: var(--folio-brand);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       COMPONENTS
+    ═══════════════════════════════════════════════════════════════ */
+    .folio-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--folio-line);
+        border-radius: 1.75rem;
+        background: var(--folio-surface);
+    }
+
+    /* Mouse-follow spotlight — set --mx / --my from JS (see useSpotlight) */
+    .folio-spotlight::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        background: radial-gradient(
+            420px circle at var(--mx, 50%) var(--my, 50%),
+            color-mix(in srgb, var(--folio-brand) 12%, transparent),
+            transparent 60%
+        );
+    }
+    .folio-spotlight:hover::after { opacity: 1; }
+
+    .folio-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        border: 1px solid var(--folio-line);
+        border-radius: 999px;
+        padding: 0.32rem 0.8rem;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--folio-ink-soft);
+        background: var(--folio-paper);
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .folio-pill:hover {
+        border-color: var(--folio-ink);
+        color: var(--folio-ink);
+    }
+
+    /* Buttons */
+    .folio-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        border-radius: 999px;
+        padding: 0.85rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+        transition: transform 0.3s var(--folio-ease), background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+    .folio-btn:active { transform: scale(0.97); }
+    .folio-btn-solid { background: var(--folio-inverse); color: var(--folio-inverse-ink); }
+    .folio-btn-solid:hover { background: var(--folio-brand); color: var(--folio-brand-ink); }
+    .folio-btn-brand { background: var(--folio-brand); color: var(--folio-brand-ink); }
+    .folio-btn-brand:hover { background: var(--folio-inverse); color: var(--folio-inverse-ink); }
+    .folio-btn-outline { border: 1px solid var(--folio-line-strong); color: var(--folio-ink); }
+    .folio-btn-outline:hover { border-color: var(--folio-ink); }
+    .folio-btn .folio-btn-icon { transition: transform 0.3s var(--folio-ease); }
+    .folio-btn:hover .folio-btn-icon { transform: translate(2px, -2px); }
+
+    /* Underline link */
+    .folio-link {
+        background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+        transition: background-size 0.35s var(--folio-ease), color 0.2s ease;
+    }
+    .folio-link:hover { background-size: 100% 1px; }
+
+    /* Form fields */
+    .folio-input {
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--folio-line-strong);
+        background: transparent;
+        padding: 0.85rem 0;
+        font-size: 1rem;
+        color: var(--folio-ink);
+        outline: none;
+        transition: border-color 0.25s ease;
+    }
+    .folio-input::placeholder { color: var(--folio-ink-muted); }
+    .folio-input:focus { border-color: var(--folio-brand); }
+    .folio-input[aria-invalid='true'] { border-color: hsl(0 80% 60%); }
+
+    /* Browser frame around project screenshots */
+    .folio-browser {
+        overflow: hidden;
+        border: 1px solid var(--folio-line);
+        border-radius: 1.1rem;
+        background: var(--folio-paper-2);
+        box-shadow: var(--folio-shadow);
+    }
+    .folio-browser-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        height: 2.1rem;
+        padding: 0 0.9rem;
+        border-bottom: 1px solid var(--folio-line);
+    }
+    .folio-browser-dot {
+        width: 0.55rem;
+        height: 0.55rem;
+        border-radius: 999px;
+        background: var(--folio-line-strong);
+    }
+
+    /* Subtle film grain over the whole page */
+    .folio-grain {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        pointer-events: none;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    html.light .folio-grain { opacity: 0.07; mix-blend-mode: multiply; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════════════ */
+@keyframes folio-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0; }
+}
+
+.folio-caret { animation: folio-blink 1s steps(1) infinite; }
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+.folio-marquee-item:hover > span:first-child {
+    color: var(--folio-marquee-hover);
+}
+
+.folio-marquee-mask {
+    mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-marquee,
+    .animate-spin-slow,
+    .animate-ping,
+    .folio-caret { animation: none !important; }
+}

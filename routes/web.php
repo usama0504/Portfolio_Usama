@@ -1,0 +1,39 @@
+<?php
+
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\UploadController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PortfolioController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PortfolioController::class, 'show'])->name('home');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:contact')
+    ->name('contact.store');
+
+// Dashboard: edit the portfolio content from the browser.
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [AuthController::class, 'create'])->name('login');
+        Route::post('login', [AuthController::class, 'store'])
+            ->middleware('throttle:admin-login')
+            ->name('login.store');
+    });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/', [ContentController::class, 'edit'])->name('dashboard');
+        Route::put('content/{section}', [ContentController::class, 'update'])->name('content.update');
+        Route::delete('content/{section}', [ContentController::class, 'destroy'])->name('content.destroy');
+        Route::post('upload', [UploadController::class, 'store'])->name('upload');
+
+        // Contact-form inbox
+        Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/{message}', [MessageController::class, 'show'])->name('messages.show');
+        Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+        Route::delete('messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
+    });
+});
