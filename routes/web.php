@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\PasswordResetController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PortfolioController;
@@ -46,6 +47,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('messages/{message}', [MessageController::class, 'show'])->name('messages.show');
         Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
         Route::delete('messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        // Your account: details + password
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('password', [ProfileController::class, 'password'])->name('profile.password');
+
         Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
     });
 });

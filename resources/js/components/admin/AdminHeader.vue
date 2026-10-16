@@ -1,13 +1,40 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { ChevronDown } from '@lucide/vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-defineProps<{ active: 'content' | 'messages' }>();
+defineProps<{ active: 'content' | 'messages' | 'profile' }>();
 
 const page = usePage();
 const unread = computed(() => Number((page.props as Record<string, unknown>).unreadMessages ?? 0));
+const user = computed(() => (page.props as Record<string, unknown>).adminUser as { name: string; email: string } | null);
+const initial = computed(() => (user.value?.name?.trim()?.[0] ?? 'A').toUpperCase());
 
-const logout = () => router.post('/admin/logout');
+/* ── Admin menu (Profile / Log out) ── */
+const open = ref(false);
+const menuRoot = ref<HTMLElement | null>(null);
+
+const close = () => (open.value = false);
+const logout = () => {
+    close();
+    router.post('/admin/logout');
+};
+
+function onPointerDown(event: PointerEvent) {
+    if (open.value && menuRoot.value && !menuRoot.value.contains(event.target as Node)) close();
+}
+function onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') close();
+}
+
+onMounted(() => {
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeydown);
+});
+onUnmounted(() => {
+    document.removeEventListener('pointerdown', onPointerDown);
+    document.removeEventListener('keydown', onKeydown);
+});
 
 const tab = 'flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium transition sm:flex-none';
 </script>
@@ -25,7 +52,7 @@ const tab = 'flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium tra
             </div>
 
             <nav
-                class="order-last flex w-full items-center gap-1 rounded-full border border-line bg-surface p-1 sm:order-none sm:w-auto"
+                class="order-last flex w-full items-center gap-1 rounded-full border border-line bg-surface p-1 sm:order-0 sm:w-auto"
                 aria-label="Dashboard"
             >
                 <Link
@@ -57,13 +84,51 @@ const tab = 'flex-1 rounded-full px-4 py-1.5 text-center text-sm font-medium tra
                 >
                     <span class="hidden sm:inline">View website</span><span class="sm:hidden">Site</span> ↗
                 </a>
-                <button
-                    type="button"
-                    class="rounded-full bg-ink px-3.5 py-2 font-medium text-paper transition hover:opacity-90"
-                    @click="logout"
-                >
-                    Log out
-                </button>
+
+                <!-- Admin menu -->
+                <div ref="menuRoot" class="relative">
+                    <button
+                        type="button"
+                        class="flex items-center gap-2 rounded-full border bg-surface py-1 pr-2.5 pl-1 font-medium transition hover:border-brand sm:pr-3"
+                        :class="open || active === 'profile' ? 'border-brand' : 'border-line-strong'"
+                        aria-haspopup="menu"
+                        :aria-expanded="open"
+                        @click="open = !open"
+                    >
+                        <span class="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-bold text-brand-ink">
+                            {{ initial }}
+                        </span>
+                        <span class="hidden sm:inline">Admin</span>
+                        <ChevronDown class="size-4 text-ink-soft transition-transform" :class="open ? 'rotate-180' : ''" />
+                    </button>
+
+                    <div
+                        v-if="open"
+                        role="menu"
+                        class="absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-2xl border border-line bg-surface shadow-xl"
+                    >
+                        <!-- <div class="border-b border-line px-4 py-3">
+                            <p class="truncate text-sm font-semibold text-ink">{{ user?.name || 'Admin' }}</p>
+                            <p class="truncate text-xs text-ink-muted">{{ user?.email }}</p>
+                        </div> -->
+                        <Link
+                            href="/admin/profile"
+                            role="menuitem"
+                            class="block px-4 py-3 text-sm text-ink transition hover:bg-paper-2"
+                            @click="close"
+                        >
+                            Profile
+                        </Link>
+                        <button
+                            type="button"
+                            role="menuitem"
+                            class="block w-full px-4 py-3 text-left text-sm text-red-500 transition hover:bg-paper-2"
+                            @click="logout"
+                        >
+                            Log out
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
