@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'status' => fn () => $request->hasSession() ? $request->session()->get('status') : null,
             'unreadMessages' => fn () => $request->user() ? Message::unreadCount() : 0,
         ];
     }
