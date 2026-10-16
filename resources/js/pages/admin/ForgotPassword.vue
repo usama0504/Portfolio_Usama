@@ -32,7 +32,7 @@ const input =
                 <label class="block">
                     <span class="mb-1.5 block text-sm font-medium">Email</span>
                     <input v-model="form.email" type="email" autocomplete="username" required autofocus :class="input" />
-                    <span v-if="form.errors.email" class="mt-1 block text-xs break-words text-red-500">{{ form.errors.email }}</span>
+                    <span v-if="form.errors.email" class="mt-1 block text-xs wrap-break-word text-red-500">{{ form.errors.email }}</span>
                 </label>
 
                 <button
