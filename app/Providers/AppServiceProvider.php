@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -30,8 +31,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // The reset link in the email opens the dashboard's own reset page.
+        ResetPassword::createUrlUsing(fn ($user, string $token) => route('admin.password.reset', [
+            'token' => $token,
+            'email' => $user->getEmailForPasswordReset(),
+        ]));
+
         $this->configureRateLimiters();
-        if (config('app.env') !== 'local' || request()->header('x-forwarded-proto') == 'https') {
+         if (config('app.env') !== 'local' || request()->header('x-forwarded-proto') == 'https') {
         URL::forceScheme('https');
     }
     }
@@ -65,6 +73,13 @@ class AppServiceProvider extends ServiceProvider
             return [
                 Limit::perMinute(3)->by($request->ip()),
                 Limit::perDay(20)->by($request->ip()),
+            ];
+        });
+
+        RateLimiter::for('admin-forgot', function (Request $request) {
+            return [
+                Limit::perMinute(3)->by($request->ip()),
+                Limit::perHour(10)->by($request->ip()),
             ];
         });
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PortfolioController;
@@ -24,6 +25,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('login', [AuthController::class, 'store'])
             ->middleware('throttle:admin-login')
             ->name('login.store');
+
+        // Forgot password: emailed link -> choose a new password
+        Route::get('forgot-password', [PasswordResetController::class, 'create'])->name('password.request');
+        Route::post('forgot-password', [PasswordResetController::class, 'store'])
+            ->middleware('throttle:admin-forgot')
+            ->name('password.email');
+        Route::get('reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+        Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
     });
 
     Route::middleware('auth')->group(function () {

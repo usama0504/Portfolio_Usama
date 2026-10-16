@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const form = useForm({ email: '', password: '', remember: false });
+const status = computed(() => (usePage().props as Record<string, unknown>).status as string | null);
 
 function submit() {
     form.post('/admin/login', { onFinish: () => form.reset('password') });
@@ -25,6 +27,8 @@ const input =
             </div>
 
             <form class="space-y-4 rounded-3xl border border-line bg-surface p-5 shadow-sm sm:p-6" @submit.prevent="submit">
+                <p v-if="status" class="rounded-xl border border-brand/40 bg-brand/10 p-3 text-sm text-ink">{{ status }}</p>
+
                 <label class="block">
                     <span class="mb-1.5 block text-sm font-medium">Email</span>
                     <input v-model="form.email" type="email" autocomplete="username" required autofocus :class="input" />
@@ -32,7 +36,10 @@ const input =
                 </label>
 
                 <label class="block">
-                    <span class="mb-1.5 block text-sm font-medium">Password</span>
+                    <span class="mb-1.5 flex items-center justify-between text-sm font-medium">
+                        Password
+                        <a href="/admin/forgot-password" class="font-normal text-brand underline-offset-4 hover:underline">Forgot password?</a>
+                    </span>
                     <input v-model="form.password" type="password" autocomplete="current-password" required :class="input" />
                     <span v-if="form.errors.password" class="mt-1 block text-xs text-red-500">{{ form.errors.password }}</span>
                 </label>
