@@ -4,6 +4,8 @@ export type FieldType =
     | 'text'
     | 'textarea'
     | 'image'
+    | 'file'
+    | 'gallery'
     | 'bool'
     | 'select'
     | 'strings'
@@ -54,8 +56,24 @@ export const sections: Section[] = [
                 { key: 'email', label: 'Email', type: 'text', help: 'Messages from the contact form are sent here.' },
                 { key: 'availability', label: 'Availability text', type: 'text', placeholder: 'Open to opportunities' },
                 { key: 'photo', label: 'Photo', type: 'image', help: 'Portrait photo (4:5 works best). Leave empty to show your initials.' },
+                { key: 'cv', label: 'CV (PDF)', type: 'file', help: 'Upload your CV as a PDF. A "Download CV" button then appears on the website.' },
                 { key: 'github', label: 'GitHub link', type: 'text', placeholder: 'https://github.com/…' },
                 { key: 'linkedin', label: 'LinkedIn link', type: 'text', placeholder: 'https://linkedin.com/in/…', help: 'Leave empty to hide the LinkedIn icon.' },
+            ],
+        },
+    },
+    {
+        id: 'seo',
+        label: 'SEO & sharing',
+        description: 'How your website looks in Google and when the link is shared on WhatsApp, LinkedIn, etc.',
+        field: {
+            key: 'seo',
+            label: 'SEO',
+            type: 'object',
+            fields: [
+                { key: 'title', label: 'Page title', type: 'text', help: 'Max 70 characters. Leave empty to use "Your name — Job title".' },
+                { key: 'description', label: 'Description', type: 'textarea', help: 'About 150 characters works best. Leave empty to use your short intro.' },
+                { key: 'image', label: 'Share image', type: 'image', help: 'Picture shown when the link is shared (1200×630 works best).' },
             ],
         },
     },
@@ -156,6 +174,7 @@ export const sections: Section[] = [
                     ],
                 },
                 { key: 'image', label: 'Project image', type: 'image', help: '16:10 image works best (e.g. 1600×1000).' },
+                { key: 'gallery', label: 'Screenshots gallery', type: 'gallery', help: 'Extra screenshots shown in the project popup (the cover image above comes first).' },
                 { key: 'overview', label: 'Overview', type: 'textarea' },
                 { key: 'problem', label: 'Problem it solves', type: 'textarea' },
                 { key: 'role', label: 'Your role', type: 'text' },
@@ -229,7 +248,7 @@ export function blankItem(fields: Field[]): Record<string, unknown> {
     for (const field of fields) {
         if (field.type === 'bool') {
             item[field.key] = false;
-        } else if (field.type === 'strings' || field.type === 'list') {
+        } else if (field.type === 'strings' || field.type === 'list' || field.type === 'gallery') {
             item[field.key] = [];
         } else if (field.type === 'select') {
             item[field.key] = field.options?.[0]?.value ?? '';

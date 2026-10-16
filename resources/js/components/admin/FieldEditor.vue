@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { blankItem } from '@/admin/schema';
 import type { Field } from '@/admin/schema';
-import { uploadImage } from '@/admin/upload';
+import { uploadFile } from '@/admin/upload';
 import { asset } from '@/lib/asset';
 
 defineOptions({ name: 'FieldEditor' });
@@ -18,7 +18,7 @@ const smallBtn =
 const update = (value: any) => emit('update:modelValue', value);
 
 const items = computed<any[]>(() => (Array.isArray(props.modelValue) ? props.modelValue : []));
-const wide = (f: Field) => ['textarea', 'list', 'strings', 'image', 'object'].includes(f.type);
+const wide = (f: Field) => ['textarea', 'list', 'strings', 'image', 'file', 'gallery', 'object'].includes(f.type);
 
 /* ── object ── */
 function setKey(key: string, value: any) {
@@ -58,7 +58,7 @@ const preview = computed(() => {
     return value.startsWith('/') && !value.startsWith('//') ? asset(value) : value;
 });
 
-async function onFile(event: Event) {
+async function onFile(event: Event, kind: 'image' | 'document' = 'image') {
     const element = event.target as HTMLInputElement;
     const file = element.files?.[0];
     if (!file) return;
@@ -66,10 +66,34 @@ async function onFile(event: Event) {
     uploading.value = true;
     uploadError.value = '';
     try {
-        update(await uploadImage(file));
+        update(await uploadFile(file, kind));
     } catch (error) {
         uploadError.value = error instanceof Error ? error.message : 'Upload failed.';
     } finally {
+        uploading.value = false;
+        element.value = '';
+    }
+}
+
+/* ── gallery (several pictures) ── */
+const thumb = (path: string) => (path.startsWith('/') && !path.startsWith('//') ? asset(path) : path);
+
+async function onGallery(event: Event) {
+    const element = event.target as HTMLInputElement;
+    const files = Array.from(element.files ?? []);
+    if (!files.length) return;
+
+    uploading.value = true;
+    uploadError.value = '';
+    const urls: string[] = [...items.value];
+    try {
+        for (const file of files) {
+            urls.push(await uploadFile(file, 'image'));
+        }
+    } catch (error) {
+        uploadError.value = error instanceof Error ? error.message : 'Upload failed.';
+    } finally {
+        update(urls);
         uploading.value = false;
         element.value = '';
     }
@@ -146,7 +170,7 @@ async function onFile(event: Event) {
                     <div class="flex flex-wrap items-center gap-2">
                         <label :class="[smallBtn, 'cursor-pointer']">
                             {{ uploading ? 'Uploading…' : 'Upload image' }}
-                            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" @change="onFile" />
+                            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" @change="onFile($event, 'image')" />
                         </label>
                         <button v-if="modelValue" type="button" :class="smallBtn" @click="update('')">Remove</button>
                         <span v-if="uploadError" class="text-xs text-red-500">{{ uploadError }}</span>
@@ -154,6 +178,62 @@ async function onFile(event: Event) {
                     <span v-if="field.help" class="block text-xs text-ink-muted">{{ field.help }}</span>
                 </div>
             </div>
+        </div>
+
+        <!-- file (PDF) -->
+        <div v-else-if="field.type === 'file'">
+            <span class="mb-1.5 block text-sm font-medium text-ink">{{ field.label }}</span>
+            <div class="space-y-2">
+                <input
+                    type="text"
+                    :class="input"
+                    placeholder="/uploads/… (use the upload button)"
+                    :value="modelValue ?? ''"
+                    @input="update(($event.target as HTMLInputElement).value)"
+                />
+                <div class="flex flex-wrap items-center gap-2">
+                    <label :class="[smallBtn, 'cursor-pointer']">
+                        {{ uploading ? 'Uploading…' : 'Upload PDF' }}
+                        <input type="file" accept="application/pdf" class="hidden" @change="onFile($event, 'document')" />
+                    </label>
+                    <a v-if="modelValue" :href="thumb(modelValue)" target="_blank" rel="noopener" :class="smallBtn">View file ↗</a>
+                    <button v-if="modelValue" type="button" :class="smallBtn" @click="update('')">Remove</button>
+                    <span v-if="uploadError" class="text-xs text-red-500">{{ uploadError }}</span>
+                </div>
+                <span v-if="field.help" class="block text-xs text-ink-muted">{{ field.help }}</span>
+            </div>
+        </div>
+
+        <!-- gallery -->
+        <div v-else-if="field.type === 'gallery'">
+            <span class="mb-1.5 block text-sm font-medium text-ink">{{ field.label }}</span>
+            <ul v-if="items.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <li v-for="(path, index) in items" :key="path + index" class="rounded-xl border border-line bg-paper p-2">
+                    <div class="aspect-[16/10] overflow-hidden rounded-lg bg-paper-2">
+                        <img :src="thumb(path)" alt="" class="h-full w-full object-cover object-top" loading="lazy" />
+                    </div>
+                    <div class="mt-2 flex items-center justify-between gap-1">
+                        <button type="button" :class="smallBtn" :disabled="index === 0" @click="move(index, -1)">‹</button>
+                        <button type="button" :class="smallBtn" :disabled="index === items.length - 1" @click="move(index, 1)">›</button>
+                        <button type="button" :class="smallBtn" @click="remove(index)">✕</button>
+                    </div>
+                </li>
+            </ul>
+            <p v-else class="rounded-xl border border-dashed border-line-strong p-4 text-sm text-ink-muted">No screenshots yet.</p>
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+                <label :class="[smallBtn, 'cursor-pointer']">
+                    {{ uploading ? 'Uploading…' : '+ Add screenshots' }}
+                    <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        multiple
+                        class="hidden"
+                        @change="onGallery"
+                    />
+                </label>
+                <span v-if="uploadError" class="text-xs text-red-500">{{ uploadError }}</span>
+            </div>
+            <span v-if="field.help" class="mt-1 block text-xs text-ink-muted">{{ field.help }}</span>
         </div>
 
         <!-- group of fields -->

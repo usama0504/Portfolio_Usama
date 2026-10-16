@@ -6,9 +6,12 @@ use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PortfolioController::class, 'show'])->name('home');
+Route::get('/robots.txt', [SeoController::class, 'robots']);
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
 
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:contact')

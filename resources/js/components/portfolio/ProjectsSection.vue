@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { motion } from 'motion-v';
-import { ArrowUpRight, Check, ExternalLink, X } from '@lucide/vue';
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, ExternalLink, X } from '@lucide/vue';
 import BrandIcon from '@/components/portfolio/BrandIcon.vue';
 import { useReducedMotion } from '@/composables/useReducedMotion';
 import { projects, visibleSocialLinks } from '@/data/portfolio';
@@ -17,12 +17,34 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
 /* ── Case-study modal ───────────────────────────────────────── */
 const activeProject = ref<Project | null>(null);
-const openProject = (p: Project) => (activeProject.value = p);
+const galleryIndex = ref(0);
+const openProject = (p: Project) => {
+    galleryIndex.value = 0;
+    activeProject.value = p;
+};
+
+// Cover image first, then the extra screenshots.
+const images = computed<string[]>(() => {
+    const p = activeProject.value;
+
+    if (!p) return [];
+
+    return [p.image, ...(p.gallery ?? [])].filter((src, i, all): src is string => !!src && all.indexOf(src) === i);
+});
+const step = (by: number) => {
+    const n = images.value.length;
+
+    if (n > 1) galleryIndex.value = (galleryIndex.value + by + n) % n;
+};
 const closeProject = () => (activeProject.value = null);
 
 function onKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
         closeProject();
+    } else if (e.key === 'ArrowLeft') {
+        step(-1);
+    } else if (e.key === 'ArrowRight') {
+        step(1);
     }
 }
 
@@ -195,12 +217,52 @@ onUnmounted(() => {
                         <h3 class="folio-display mt-4 text-[clamp(2rem,5vw,3.4rem)] text-ink">{{ activeProject.name }}</h3>
                         <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft">{{ activeProject.overview }}</p>
 
-                        <img
-                            v-if="activeProject.image"
-                            :src="activeProject.image"
-                            :alt="`${activeProject.name} interface preview`"
-                            class="mt-8 w-full rounded-2xl border border-line"
-                        />
+                        <div v-if="images.length" class="mt-8">
+                            <div class="relative overflow-hidden rounded-2xl border border-line bg-surface">
+                                <div class="flex aspect-[16/10] items-center justify-center">
+                                    <img
+                                        :key="galleryIndex"
+                                        :src="images[galleryIndex]"
+                                        :alt="`${activeProject.name} screenshot ${galleryIndex + 1}`"
+                                        class="max-h-full max-w-full object-contain"
+                                    />
+                                </div>
+                                <template v-if="images.length > 1">
+                                    <button
+                                        type="button"
+                                        class="absolute top-1/2 left-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-paper transition hover:bg-ink"
+                                        aria-label="Previous screenshot"
+                                        @click="step(-1)"
+                                    >
+                                        <ChevronLeft class="h-5 w-5" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="absolute top-1/2 right-3 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/80 text-paper transition hover:bg-ink"
+                                        aria-label="Next screenshot"
+                                        @click="step(1)"
+                                    >
+                                        <ChevronRight class="h-5 w-5" />
+                                    </button>
+                                    <span class="absolute right-3 bottom-3 rounded-full bg-black/60 px-3 py-1 font-mono text-xs text-white">
+                                        {{ galleryIndex + 1 }} / {{ images.length }}
+                                    </span>
+                                </template>
+                            </div>
+                            <ul v-if="images.length > 1" class="mt-3 flex gap-2 overflow-x-auto pb-2">
+                                <li v-for="(src, i) in images" :key="src" class="shrink-0">
+                                    <button
+                                        type="button"
+                                        class="block overflow-hidden rounded-lg border-2 transition"
+                                        :class="i === galleryIndex ? 'border-brand' : 'border-line opacity-70 hover:opacity-100'"
+                                        :aria-label="`Show screenshot ${i + 1}`"
+                                        @click="galleryIndex = i"
+                                    >
+                                        <img :src="src" alt="" class="h-16 w-28 object-cover object-top" loading="lazy" />
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
 
                         <dl class="mt-10 grid gap-6 border-y border-line py-6 sm:grid-cols-3">
                             <div>

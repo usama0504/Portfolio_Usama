@@ -15,6 +15,7 @@ class ContentController extends Controller
     /** Sections that can be edited from the dashboard. */
     public const SECTIONS = [
         'profile',
+        'seo',
         'stats',
         'techStack',
         'skills',
@@ -75,13 +76,27 @@ class ContentController extends Controller
         }
 
         if ($section === 'profile') {
-            if (isset($data['photo'])) {
-                $data['photo'] = $this->tidyPath($data['photo']);
+            foreach (['photo', 'cv'] as $key) {
+                if (isset($data[$key])) {
+                    $data[$key] = $this->tidyPath($data[$key]);
+                }
+            }
+        } elseif ($section === 'seo') {
+            if (isset($data['image'])) {
+                $data['image'] = $this->tidyPath($data['image']);
             }
         } elseif ($section === 'projects') {
             foreach ($data as $i => $project) {
-                if (is_array($project) && isset($project['image'])) {
+                if (! is_array($project)) {
+                    continue;
+                }
+
+                if (isset($project['image'])) {
                     $data[$i]['image'] = $this->tidyPath($project['image']);
+                }
+
+                if (isset($project['gallery']) && is_array($project['gallery'])) {
+                    $data[$i]['gallery'] = array_map(fn ($path) => $this->tidyPath($path), $project['gallery']);
                 }
             }
         }
@@ -117,6 +132,9 @@ class ContentController extends Controller
     {
         return [
             'data.photo' => 'photo',
+            'data.cv' => 'CV file',
+            'data.image' => 'share image',
+            'data.*.gallery.*' => 'gallery image',
             'data.github' => 'GitHub link',
             'data.linkedin' => 'LinkedIn link',
             'data.*.image' => 'project image',
@@ -160,8 +178,15 @@ class ContentController extends Controller
                 'data.email' => ['required', 'email', 'max:150'],
                 'data.availability' => ['nullable', 'string', 'max:120'],
                 'data.photo' => ['nullable', 'string', 'max:300', $url],
+                'data.cv' => ['nullable', 'string', 'max:300', $url],
                 'data.github' => ['nullable', 'string', 'max:300', $url],
                 'data.linkedin' => ['nullable', 'string', 'max:300', $url],
+            ],
+            'seo' => [
+                'data' => ['required', 'array'],
+                'data.title' => ['nullable', 'string', 'max:70'],
+                'data.description' => ['nullable', 'string', 'max:300'],
+                'data.image' => ['nullable', 'string', 'max:300', $url],
             ],
             'stats' => [
                 'data' => ['present', 'array', 'max:6'],
@@ -200,6 +225,8 @@ class ContentController extends Controller
                 'data.*.category' => ['required', 'string', 'max:60'],
                 'data.*.status' => ['nullable', 'string', 'in:live,demo,in-progress'],
                 'data.*.image' => ['nullable', 'string', 'max:300', $url],
+                'data.*.gallery' => ['nullable', 'array', 'max:12'],
+                'data.*.gallery.*' => ['required', 'string', 'max:300', $url],
                 'data.*.overview' => ['required', 'string', 'max:1200'],
                 'data.*.problem' => ['nullable', 'string', 'max:600'],
                 'data.*.role' => ['nullable', 'string', 'max:100'],

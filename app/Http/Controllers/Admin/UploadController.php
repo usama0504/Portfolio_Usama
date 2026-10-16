@@ -10,13 +10,17 @@ use Illuminate\Support\Str;
 class UploadController extends Controller
 {
     /**
-     * Save an uploaded picture into public/uploads and return its URL path.
-     * SVG is intentionally not allowed (it can contain scripts).
+     * Save an uploaded picture (default) or a PDF (type=document) into public/uploads
+     * and return its URL path. SVG is intentionally not allowed (it can contain scripts).
      */
     public function store(Request $request): JsonResponse
     {
+        $document = $request->input('type') === 'document';
+
         $request->validate([
-            'file' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
+            'file' => $document
+                ? ['required', 'file', 'mimes:pdf', 'max:8192']
+                : ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
         ]);
 
         $file = $request->file('file');

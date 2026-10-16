@@ -58,6 +58,8 @@ export type Project = {
     outcome?: string;
     links: ProjectLink[];
     image?: string;
+    /** extra screenshots shown in the project popup (after the cover image) */
+    gallery?: string[];
 };
 
 export type EducationEntry = {
@@ -88,6 +90,7 @@ export type PersonalInfo = {
     email: string;
     availability?: string;
     photo?: string;
+    cv?: string;
     socialLinks: SocialLink[];
 };
 
@@ -109,6 +112,7 @@ export type ProfileContent = {
     email: string;
     availability: string;
     photo: string;
+    cv: string;
     github: string;
     linkedin: string;
 };
@@ -128,8 +132,15 @@ export type ServiceContent = {
 
 export type ExperienceContent = Omit<ExperienceEntry, 'endDate'> & { endDate: string | null };
 
+export type SeoContent = {
+    title: string;
+    description: string;
+    image: string;
+};
+
 export type SiteContent = {
     profile: ProfileContent;
+    seo: SeoContent;
     stats: Stat[];
     techStack: string[];
     skills: SkillCategoryContent[];

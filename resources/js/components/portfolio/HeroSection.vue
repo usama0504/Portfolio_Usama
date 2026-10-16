@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { motion, useScroll, useTransform } from 'motion-v';
-import { ArrowDownRight, ArrowUpRight, MapPin } from '@lucide/vue';
+import { ArrowDownRight, ArrowUpRight, Download, MapPin } from '@lucide/vue';
 import BrandIcon from '@/components/portfolio/BrandIcon.vue';
 import { useReducedMotion } from '@/composables/useReducedMotion';
 import { useTypewriter } from '@/composables/useTypewriter';
@@ -109,6 +109,16 @@ const typed = useTypewriter([greeting]);
                             <button class="folio-btn folio-btn-outline" @click="scrollToSection('contact')">
                                 Get in touch
                             </button>
+                            <a
+                                v-if="personalInfo.cv"
+                                :href="personalInfo.cv"
+                                class="folio-btn folio-btn-outline"
+                                target="_blank"
+                                rel="noopener"
+                                download
+                            >
+                                Download CV <Download class="folio-btn-icon h-4 w-4" />
+                            </a>
                         </motion.div>
                     </motion.div>
                 </div>

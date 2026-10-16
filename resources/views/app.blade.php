@@ -1,3 +1,4 @@
+@php($seo = \App\Support\Seo::data())
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
@@ -38,7 +39,23 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ $seo['title'] }}</title>
+            @if (str_starts_with($page['component'], 'admin/'))
+                <meta name="robots" content="noindex, nofollow">
+            @else
+                <meta name="description" content="{{ $seo['description'] }}">
+                <link rel="canonical" href="{{ $seo['url'] }}">
+                <meta property="og:type" content="website">
+                <meta property="og:site_name" content="{{ config('app.name') }}">
+                <meta property="og:title" content="{{ $seo['title'] }}">
+                <meta property="og:description" content="{{ $seo['description'] }}">
+                <meta property="og:url" content="{{ $seo['url'] }}">
+                <meta property="og:image" content="{{ $seo['image'] }}">
+                <meta name="twitter:card" content="summary_large_image">
+                <meta name="twitter:title" content="{{ $seo['title'] }}">
+                <meta name="twitter:description" content="{{ $seo['description'] }}">
+                <meta name="twitter:image" content="{{ $seo['image'] }}">
+            @endif
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

@@ -39,15 +39,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <Head :title="pageMetadata.title">
-        <meta name="description" :content="pageMetadata.description" />
-        <meta property="og:title" :content="pageMetadata.title" />
-        <meta property="og:description" :content="pageMetadata.description" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" :content="pageMetadata.title" />
-        <meta name="twitter:description" :content="pageMetadata.description" />
-    </Head>
+    <Head :title="pageMetadata.title" />
 
     <PortfolioSections />
 </template>

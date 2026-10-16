@@ -17,7 +17,7 @@ const model = reactive<Record<string, any>>({});
 for (const section of sections) {
     const base = (defaultContent as Record<string, any>)[section.id];
     const saved = stored.value[section.id];
-    model[section.id] = clone(section.id === 'profile' ? { ...base, ...(saved ?? {}) } : (saved ?? base));
+    model[section.id] = clone(section.id === 'profile' || section.id === 'seo' ? { ...base, ...(saved ?? {}) } : (saved ?? base));
 }
 
 const currentId = ref(sections[0].id);

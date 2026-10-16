@@ -38,9 +38,15 @@ export const defaultContent: SiteContent = {
         timezone: 'Asia/Karachi',
         email: 'usama.webdev54@gmail.com',
         availability: 'Open to opportunities',
-        photo: '/my_image.png',
+        photo: '/me.png',
+        cv: '',
         github: 'https://github.com/usama0504',
-        linkedin: 'https://www.linkedin.com/in/muhammad-usama54/',
+        linkedin: '',
+    },
+    seo: {
+        title: '',
+        description: '',
+        image: '/og-default.png',
     },
     stats: [
         { value: '1+', label: 'Year of professional experience' },
@@ -139,6 +145,15 @@ export const defaultContent: SiteContent = {
             name: 'Hospital Management System',
             category: 'Healthcare',
             image: '/images/projects/hospital-management.png',
+            gallery: [
+                '/images/projects/gallery/hospital-1-home.webp',
+                '/images/projects/gallery/hospital-2-departments-doctors.webp',
+                '/images/projects/gallery/hospital-3-news-footer.webp',
+                '/images/projects/gallery/hospital-4-doctors.webp',
+                '/images/projects/gallery/hospital-5-contact.webp',
+                '/images/projects/gallery/hospital-6-booking.webp',
+                '/images/projects/gallery/hospital-7-admin-dashboard.webp',
+            ],
             overview:
                 'A full hospital management web app built with Laravel, Inertia.js and Vue.js. Admins, doctors and receptionists each get their own tools for patients, appointments, prescriptions and billing, plus a public website where patients can browse doctors and book appointments online.',
             problem:
@@ -171,6 +186,13 @@ export const defaultContent: SiteContent = {
             category: 'E-commerce',
             status: 'demo',
             image: '/images/projects/ecommerce-shop.png',
+            gallery: [
+                '/images/projects/gallery/shop-1-home.webp',
+                '/images/projects/gallery/shop-2-order-tracking.webp',
+                '/images/projects/gallery/shop-3-wishlist.webp',
+                '/images/projects/gallery/shop-4-sign-up.webp',
+                '/images/projects/gallery/shop-5-footer.webp',
+            ],
             overview:
                 'A single-page online shop built with Vue 3, Vue Router and Tailwind CSS. Products load from a public store API, and shoppers can search, filter, sort, save favourites and manage a cart.',
             problem:
@@ -311,6 +333,7 @@ export function applyContent(raw?: Partial<SiteContent> | unknown[] | null): voi
         email: profile.email,
         availability: blank(profile.availability),
         photo: img(profile.photo),
+        cv: img(profile.cv),
         socialLinks: links,
     });
     replace(visibleSocialLinks, links.filter((link) => link.url.trim() !== ''));
@@ -349,6 +372,7 @@ export function applyContent(raw?: Partial<SiteContent> | unknown[] | null): voi
             category: p.category,
             status: blank(p.status) as Project['status'],
             image: img(p.image),
+            gallery: (p.gallery ?? []).map((path) => img(path)).filter((path): path is string => !!path),
             overview: p.overview,
             problem: blank(p.problem),
             role: blank(p.role),
@@ -387,8 +411,9 @@ export function applyContent(raw?: Partial<SiteContent> | unknown[] | null): voi
         .slice(0, 2)
         .toUpperCase();
 
-    pageMetadata.title = `${profile.name} — ${profile.title}`;
-    pageMetadata.description = profile.summary;
+    const seo = { ...defaultContent.seo, ...(saved.seo ?? {}) };
+    pageMetadata.title = blank(seo.title) ?? `${profile.name} — ${profile.title}`;
+    pageMetadata.description = blank(seo.description) ?? profile.summary;
 }
 
 // Defaults first, so the static build (and the first paint) always have content.
