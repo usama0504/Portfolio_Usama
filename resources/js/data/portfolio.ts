@@ -38,7 +38,7 @@ export const defaultContent: SiteContent = {
         timezone: 'Asia/Karachi',
         email: 'usama.webdev54@gmail.com',
         availability: 'Open to opportunities',
-        photo: '/me.png',
+        photo: '/my_image.png',
         cv: '',
         github: 'https://github.com/usama0504',
         linkedin: '',
