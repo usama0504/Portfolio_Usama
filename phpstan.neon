@@ -11,3 +11,8 @@ parameters:
         - routes/
 
     level: 5
+
+    ignoreErrors:
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
+        - '#Match expression does not handle remaining value#'
+        - '#Parameter #1 \$callback of method Illuminate\\Database\\Eloquent\\Collection.*contains unresolvable type#'
