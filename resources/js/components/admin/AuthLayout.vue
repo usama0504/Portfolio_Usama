@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { ArrowLeft, Check } from '@lucide/vue';
+import { ArrowLeft } from '@lucide/vue';
 import { initials, personalInfo } from '@/data/portfolio';
 
 defineProps<{ title: string; subtitle: string }>();
 
-const perks = [
-    'Edit your projects, skills and education',
-    'Upload your CV and project screenshots',
-    'Read and reply to contact messages',
-];
-
-// Always-dark brand background (looks the same in light and dark mode).
 const panel = {
     background:
         'radial-gradient(900px 520px at 90% -10%, rgba(45,212,191,.38), transparent 60%), radial-gradient(700px 520px at -5% 110%, rgba(13,138,122,.45), transparent 60%), linear-gradient(160deg, #09141e 0%, #0d2a30 100%)',
@@ -18,76 +11,80 @@ const panel = {
 </script>
 
 <template>
-    <div class="min-h-screen bg-paper text-ink lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        <!-- brand panel (desktop) -->
-        <aside class="relative hidden overflow-hidden text-white lg:flex lg:flex-col lg:justify-between lg:p-14" :style="panel">
-            <div class="flex items-center gap-3 text-sm font-semibold tracking-wide text-white/80">
-                <span class="inline-flex size-9 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20">⚙</span>
-                Dashboard
-            </div>
-
-            <div>
-                <div class="size-36 overflow-hidden rounded-full bg-[#2dd4bf] p-1.5 shadow-2xl shadow-black/40">
+    <div
+        class="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,#e8f3ff_0%,#f5f8fc_48%,#edf3fa_100%)] px-4 py-6 text-ink sm:px-6 lg:px-8"
+    >
+        <section
+            class="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_80px_rgba(15,48,78,0.14)] ring-1 ring-slate-200/80"
+        >
+            <!-- Mobile header: clean, compact, and intentionally image-free -->
+            <header
+                class="flex items-center gap-3 px-5 py-4 text-white lg:hidden"
+                :style="panel"
+            >
+                <span
+                    class="size-11 shrink-0 overflow-hidden rounded-full bg-[#2dd4bf] p-0.5"
+                >
                     <img
                         v-if="personalInfo.photo"
                         :src="personalInfo.photo"
                         :alt="personalInfo.name"
                         class="size-full rounded-full object-cover object-top"
                     />
-                    <span v-else class="flex size-full items-center justify-center rounded-full bg-[#09141e] text-4xl font-bold">
+                    <span
+                        v-else
+                        class="flex size-full items-center justify-center rounded-full bg-[#09141e] text-sm font-bold"
+                    >
                         {{ initials }}
                     </span>
-                </div>
-
-                <h2 class="font-display mt-8 text-5xl leading-tight font-bold">{{ personalInfo.name }}</h2>
-                <p class="mt-2 text-xl font-medium text-[#2dd4bf]">{{ personalInfo.title }}</p>
-
-                <ul class="mt-10 space-y-3 text-white/80">
-                    <li v-for="perk in perks" :key="perk" class="flex items-center gap-3">
-                        <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#2dd4bf]/20 text-[#2dd4bf]">
-                            <Check class="size-3.5" />
-                        </span>
-                        {{ perk }}
-                    </li>
-                </ul>
-            </div>
-
-            <a href="/" class="inline-flex items-center gap-2 text-sm text-white/60 transition hover:text-white">
-                <ArrowLeft class="size-4" /> Back to website
-            </a>
-        </aside>
-
-        <!-- brand strip (phones & tablets) -->
-        <header class="flex items-center gap-3 px-5 py-4 text-white lg:hidden" :style="panel">
-            <span class="size-11 shrink-0 overflow-hidden rounded-full bg-[#2dd4bf] p-0.5">
-                <img
-                    v-if="personalInfo.photo"
-                    :src="personalInfo.photo"
-                    :alt="personalInfo.name"
-                    class="size-full rounded-full object-cover object-top"
-                />
-                <span v-else class="flex size-full items-center justify-center rounded-full bg-[#09141e] text-sm font-bold">
-                    {{ initials }}
                 </span>
-            </span>
-            <div class="min-w-0">
-                <p class="font-display truncate font-bold">{{ personalInfo.name }}</p>
-                <p class="text-xs text-white/70">Dashboard</p>
+                <div class="min-w-0">
+                    <p class="truncate font-display font-bold">
+                        {{ personalInfo.name }}
+                    </p>
+                    <!-- <p class="text-xs text-white/70">Dashboard</p> -->
+                </div>
+            </header>
+
+            <div
+                class="grid grid-cols-1 md:min-h-[540px] md:grid-cols-[0.82fr_1.18fr]"
+            >
+                <!-- Image only: no name, heading, logo, or overlay text -->
+                <aside
+                    class="relative hidden min-h-[540px] overflow-hidden bg-slate-900 md:block"
+                >
+                    <img
+                        v-if="personalInfo.photo"
+                        :src="personalInfo.photo"
+                        :alt="personalInfo.name || 'Portfolio profile photo'"
+                        class="absolute inset-0 h-full w-full object-cover object-center"
+                    />
+                    <div
+                        v-else
+                        class="absolute inset-0 bg-gradient-to-br from-slate-950 via-sky-950 to-teal-800"
+                        aria-hidden="true"
+                    ></div>
+                </aside>
+
+                <!-- Form panel -->
+                <main
+                    class="flex items-center justify-center px-5 py-8 sm:px-10 sm:py-10 lg:px-14"
+                >
+                    <div class="w-full max-w-md">
+                        <h1
+                            class="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
+                        >
+                            {{ title }}
+                        </h1>
+                        <p
+                            class="mt-2 mb-7 text-sm leading-6 text-slate-500 sm:text-base"
+                        >
+                            {{ subtitle }}
+                        </p>
+                        <slot />
+                    </div>
+                </main>
             </div>
-        </header>
-
-        <!-- form side -->
-        <main class="flex items-start justify-center px-5 py-10 sm:px-10 lg:min-h-screen lg:items-center lg:py-16">
-            <div class="w-full max-w-md">
-                <h1 class="font-display text-3xl font-bold sm:text-4xl">{{ title }}</h1>
-                <p class="mt-2 mb-8 text-ink-soft">{{ subtitle }}</p>
-
-                <slot />
-
-                <p class="mt-8 text-center text-sm lg:hidden">
-                    <a href="/" class="text-ink-soft underline-offset-4 hover:text-ink hover:underline">← Back to website</a>
-                </p>
-            </div>
-        </main>
+        </section>
     </div>
 </template>

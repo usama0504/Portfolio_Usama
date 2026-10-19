@@ -41,17 +41,17 @@ function submit() {
                 required
                 :error="form.errors.password"
             >
-                <template #aside>
-                    <a href="/admin/forgot-password" class="font-normal text-brand underline-offset-4 hover:underline">
-                        Forgot password?
-                    </a>
-                </template>
             </AuthInput>
 
-            <label class="flex items-center gap-2.5 text-sm text-ink-soft">
-                <input v-model="form.remember" type="checkbox" class="size-4 rounded accent-brand" />
-                Keep me signed in
-            </label>
+            <div class="flex items-center justify-between gap-3 -mt-1">
+                <label class="flex items-center gap-2.5 text-sm text-ink-soft">
+                    <input v-model="form.remember" type="checkbox" class="size-4 rounded accent-brand" />
+                    Keep me signed in
+                </label>
+                <a href="/admin/forgot-password" class="shrink-0 text-sm font-medium text-brand underline-offset-4 hover:underline">
+                    Forgot password?
+                </a>
+            </div>
 
             <button
                 type="submit"
@@ -64,6 +64,15 @@ function submit() {
                 />
                 {{ form.processing ? 'Signing in…' : 'Sign in' }}
             </button>
+
+            <div class="pt-1 text-center">
+                <p class="text-sm text-slate-500">
+                    Not signing in?
+                    <a href="/" class="ml-1 font-semibold text-brand underline-offset-4 transition hover:underline">
+                        Back to site
+                    </a>
+                </p>
+            </div>
         </form>
     </AuthLayout>
 </template>
