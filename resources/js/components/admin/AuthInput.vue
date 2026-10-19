@@ -32,7 +32,7 @@ const inputType = computed(() => (props.type === 'password' && reveal.value ? 't
             <component
                 :is="icon === 'mail' ? Mail : Lock"
                 v-if="icon"
-                class="pointer-events-none absolute top-1/2 left-3.5 size-[18px] -translate-y-1/2 text-ink-muted"
+                class="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-ink-muted"
             />
             <input
                 v-model="model"
@@ -56,11 +56,11 @@ const inputType = computed(() => (props.type === 'password' && reveal.value ? 't
                 :aria-label="reveal ? 'Hide password' : 'Show password'"
                 @click="reveal = !reveal"
             >
-                <component :is="reveal ? EyeOff : Eye" class="size-[18px]" />
+                <component :is="reveal ? EyeOff : Eye" class="size-4.5" />
             </button>
         </span>
 
-        <span v-if="error" class="mt-1.5 block text-xs break-words text-red-500">{{ error }}</span>
+        <span v-if="error" class="mt-1.5 block text-xs wrap-break-word text-red-500">{{ error }}</span>
         <span v-else-if="hint" class="mt-1.5 block text-xs text-ink-muted">{{ hint }}</span>
     </label>
 </template>

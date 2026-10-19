@@ -15,7 +15,7 @@ function submit() {
 <template>
     <Head title="Forgot password" />
 
-    <AuthLayout title="Forgot password?" subtitle="Enter your admin email and we will send you a reset link.">
+    <AuthLayout title="Forgot password?" subtitle="Enter your email and we’ll send you a link to reset your password.">
         <form class="space-y-5" @submit.prevent="submit">
             <p v-if="status" class="rounded-xl border border-brand/40 bg-brand/10 p-3.5 text-sm text-ink">{{ status }}</p>
 
@@ -43,9 +43,15 @@ function submit() {
                 {{ form.processing ? 'Sending…' : 'Email me a reset link' }}
             </button>
 
-            <p class="text-center text-sm">
-                <a href="/admin/login" class="text-ink-soft underline-offset-4 hover:text-ink hover:underline">← Back to sign in</a>
-            </p>
+            <div class="border-t border-line pt-4 dark:border-slate-700">
+                <a
+                    href="/admin/login"
+                    class="mx-auto flex w-fit items-center justify-center gap-2 rounded-xl border border-line-strong bg-surface px-4 py-2.5 text-sm font-semibold text-ink-soft shadow-sm transition hover:border-brand hover:bg-brand/10 hover:text-ink focus:outline-none focus:ring-4 focus:ring-brand/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-400 dark:hover:bg-teal-400/10 dark:hover:text-white"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to sign in
+                </a>
+            </div>
         </form>
     </AuthLayout>
 </template>

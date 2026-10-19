@@ -12,14 +12,14 @@ const panel = {
 
 <template>
     <div
-        class="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,#e8f3ff_0%,#f5f8fc_48%,#edf3fa_100%)] px-4 py-6 text-ink sm:px-6 lg:px-8"
+        class="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,#e8f3ff_0%,#f5f8fc_48%,#edf3fa_100%)] px-4 py-6 text-ink transition-colors dark:bg-[radial-gradient(ellipse_at_top,#13222e_0%,#0b121b_52%,#070d14_100%)] dark:text-slate-100 sm:px-6 lg:px-8"
     >
         <section
-            class="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_80px_rgba(15,48,78,0.14)] ring-1 ring-slate-200/80"
+            class="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-[0_24px_80px_rgba(15,48,78,0.14)] ring-1 ring-slate-200/80 transition-colors dark:bg-slate-950 dark:shadow-[0_24px_80px_rgba(0,0,0,0.42)] dark:ring-slate-700/80"
         >
             <!-- Mobile header: clean, compact, and intentionally image-free -->
             <header
-                class="flex items-center gap-3 px-5 py-4 text-white lg:hidden"
+                class="flex items-center gap-3 border-b border-white/10 px-5 py-4 text-white lg:hidden"
                 :style="panel"
             >
                 <span
@@ -47,11 +47,11 @@ const panel = {
             </header>
 
             <div
-                class="grid grid-cols-1 md:min-h-[540px] md:grid-cols-[0.82fr_1.18fr]"
+                class="grid grid-cols-1 md:min-h-135 md:grid-cols-[0.82fr_1.18fr]"
             >
                 <!-- Image only: no name, heading, logo, or overlay text -->
                 <aside
-                    class="relative hidden min-h-[540px] overflow-hidden bg-slate-900 md:block"
+                    class="relative hidden min-h-135 overflow-hidden bg-slate-900 md:block"
                 >
                     <img
                         v-if="personalInfo.photo"
@@ -61,23 +61,23 @@ const panel = {
                     />
                     <div
                         v-else
-                        class="absolute inset-0 bg-gradient-to-br from-slate-950 via-sky-950 to-teal-800"
+                        class="absolute inset-0 bg-linear-to-br from-slate-950 via-sky-950 to-teal-800"
                         aria-hidden="true"
                     ></div>
                 </aside>
 
                 <!-- Form panel -->
                 <main
-                    class="flex items-center justify-center px-5 py-8 sm:px-10 sm:py-10 lg:px-14"
+                    class="flex items-center justify-center bg-white px-5 py-8 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 sm:px-10 sm:py-10 lg:px-14"
                 >
                     <div class="w-full max-w-md">
                         <h1
-                            class="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
+                            class="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl"
                         >
                             {{ title }}
                         </h1>
                         <p
-                            class="mt-2 mb-7 text-sm leading-6 text-slate-500 sm:text-base"
+                            class="mt-2 mb-7 text-sm leading-6 text-slate-500 dark:text-slate-300 sm:text-base"
                         >
                             {{ subtitle }}
                         </p>

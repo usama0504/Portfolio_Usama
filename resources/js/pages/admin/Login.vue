@@ -15,7 +15,7 @@ function submit() {
 <template>
     <Head title="Dashboard login" />
 
-    <AuthLayout title="Welcome back" subtitle="Sign in to manage your portfolio.">
+    <AuthLayout title="Welcome Back" subtitle="Sign in to access your portfolio dashboard and manage your content.">
         <form class="space-y-5" @submit.prevent="submit">
             <p v-if="status" class="rounded-xl border border-brand/40 bg-brand/10 p-3.5 text-sm text-ink">{{ status }}</p>
 
@@ -66,7 +66,7 @@ function submit() {
             </button>
 
             <div class="pt-1 text-center">
-                <p class="text-sm text-slate-500">
+                <p class="text-sm text-slate-500 dark:text-slate-300">
                     Not signing in?
                     <a href="/" class="ml-1 font-semibold text-brand underline-offset-4 transition hover:underline">
                         Back to site
