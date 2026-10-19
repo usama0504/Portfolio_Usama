@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -73,9 +74,20 @@ class PasswordResetController extends Controller
         });
 
         if ($status !== Password::PasswordReset) {
-            throw ValidationException::withMessages([
-                'email' => 'This reset link is invalid or has expired. Please request a new one.',
-            ]);
+            $message = match ($status) {
+                Password::InvalidUser => 'No admin account has this email address. Use the same email the reset link was sent to.',
+                Password::ResetThrottled => 'Please wait a minute and try again.',
+                default => 'This reset link is invalid, already used, or expired (links last 60 minutes, and only the newest email works). Please request a new link.',
+            };
+
+            throw ValidationException::withMessages(['email' => $message]);
+        }
+
+        // If someone was signed in on this browser, sign them out so the new password is used.
+        if (Auth::check()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
 
         return redirect()->route('admin.login')

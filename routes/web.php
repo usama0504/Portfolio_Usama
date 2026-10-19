@@ -32,9 +32,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('forgot-password', [PasswordResetController::class, 'store'])
             ->middleware('throttle:admin-forgot')
             ->name('password.email');
-        Route::get('reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
-        Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
     });
+
+    // The emailed link is protected by its own one-time token, so it works whether or not you are signed in.
+    Route::get('reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('reset-password', [PasswordResetController::class, 'update'])
+        ->middleware('throttle:admin-forgot')
+        ->name('password.update');
 
     Route::middleware('auth')->group(function () {
         Route::get('/', [ContentController::class, 'edit'])->name('dashboard');

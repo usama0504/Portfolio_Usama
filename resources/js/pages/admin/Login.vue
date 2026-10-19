@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import AuthInput from '@/components/admin/AuthInput.vue';
+import AuthLayout from '@/components/admin/AuthLayout.vue';
 
 const form = useForm({ email: '', password: '', remember: false });
 const status = computed(() => (usePage().props as Record<string, unknown>).status as string | null);
@@ -8,59 +10,60 @@ const status = computed(() => (usePage().props as Record<string, unknown>).statu
 function submit() {
     form.post('/admin/login', { onFinish: () => form.reset('password') });
 }
-
-const input =
-    'w-full rounded-xl border border-line-strong bg-paper px-3.5 py-2.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/30 sm:text-sm';
 </script>
 
 <template>
     <Head title="Dashboard login" />
 
-    <div class="flex min-h-screen items-center justify-center bg-paper px-4 py-12 text-ink">
-        <div class="w-full max-w-sm">
-            <div class="mb-8 text-center">
-                <span class="inline-flex size-12 items-center justify-center rounded-full bg-ink text-sm font-bold text-paper">
-                    ⚙
-                </span>
-                <h1 class="font-display mt-4 text-2xl font-bold">Dashboard</h1>
-                <p class="mt-1 text-sm text-ink-soft">Sign in to edit your portfolio.</p>
-            </div>
+    <AuthLayout title="Welcome back" subtitle="Sign in to manage your portfolio.">
+        <form class="space-y-5" @submit.prevent="submit">
+            <p v-if="status" class="rounded-xl border border-brand/40 bg-brand/10 p-3.5 text-sm text-ink">{{ status }}</p>
 
-            <form class="space-y-4 rounded-3xl border border-line bg-surface p-5 shadow-sm sm:p-6" @submit.prevent="submit">
-                <p v-if="status" class="rounded-xl border border-brand/40 bg-brand/10 p-3 text-sm text-ink">{{ status }}</p>
+            <AuthInput
+                v-model="form.email"
+                label="Email"
+                type="email"
+                icon="mail"
+                placeholder="you@example.com"
+                autocomplete="username"
+                required
+                autofocus
+                :error="form.errors.email"
+            />
 
-                <label class="block">
-                    <span class="mb-1.5 block text-sm font-medium">Email</span>
-                    <input v-model="form.email" type="email" autocomplete="username" required autofocus :class="input" />
-                    <span v-if="form.errors.email" class="mt-1 block text-xs text-red-500">{{ form.errors.email }}</span>
-                </label>
+            <AuthInput
+                v-model="form.password"
+                label="Password"
+                type="password"
+                icon="lock"
+                placeholder="Your password"
+                autocomplete="current-password"
+                required
+                :error="form.errors.password"
+            >
+                <template #aside>
+                    <a href="/admin/forgot-password" class="font-normal text-brand underline-offset-4 hover:underline">
+                        Forgot password?
+                    </a>
+                </template>
+            </AuthInput>
 
-                <label class="block">
-                    <span class="mb-1.5 flex items-center justify-between text-sm font-medium">
-                        Password
-                        <a href="/admin/forgot-password" class="font-normal text-brand underline-offset-4 hover:underline">Forgot password?</a>
-                    </span>
-                    <input v-model="form.password" type="password" autocomplete="current-password" required :class="input" />
-                    <span v-if="form.errors.password" class="mt-1 block text-xs text-red-500">{{ form.errors.password }}</span>
-                </label>
+            <label class="flex items-center gap-2.5 text-sm text-ink-soft">
+                <input v-model="form.remember" type="checkbox" class="size-4 rounded accent-brand" />
+                Keep me signed in
+            </label>
 
-                <label class="flex items-center gap-2 text-sm text-ink-soft">
-                    <input v-model="form.remember" type="checkbox" class="size-4 accent-brand" />
-                    Keep me signed in
-                </label>
-
-                <button
-                    type="submit"
-                    :disabled="form.processing"
-                    class="w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-ink transition hover:opacity-90 disabled:opacity-60"
-                >
-                    {{ form.processing ? 'Signing in…' : 'Sign in' }}
-                </button>
-            </form>
-
-            <p class="mt-6 text-center text-sm">
-                <a href="/" class="text-ink-soft underline-offset-4 hover:text-ink hover:underline">← Back to website</a>
-            </p>
-        </div>
-    </div>
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-brand-ink shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60"
+            >
+                <span
+                    v-if="form.processing"
+                    class="size-4 animate-spin rounded-full border-2 border-brand-ink/30 border-t-brand-ink"
+                />
+                {{ form.processing ? 'Signing in…' : 'Sign in' }}
+            </button>
+        </form>
+    </AuthLayout>
 </template>

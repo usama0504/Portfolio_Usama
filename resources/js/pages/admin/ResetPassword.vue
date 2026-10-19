@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import AuthInput from '@/components/admin/AuthInput.vue';
+import AuthLayout from '@/components/admin/AuthLayout.vue';
 
 const props = defineProps<{ token: string; email: string }>();
 
@@ -10,58 +13,68 @@ const form = useForm({
     password_confirmation: '',
 });
 
+const problems = computed(() => Object.values(form.errors));
+
 function submit() {
     form.post('/admin/reset-password', { onFinish: () => form.reset('password', 'password_confirmation') });
 }
-
-const input =
-    'w-full rounded-xl border border-line-strong bg-paper px-3.5 py-2.5 text-base text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/30 sm:text-sm';
 </script>
 
 <template>
     <Head title="Choose a new password" />
 
-    <div class="flex min-h-screen items-center justify-center bg-paper px-4 py-12 text-ink">
-        <div class="w-full max-w-sm">
-            <div class="mb-8 text-center">
-                <span class="inline-flex size-12 items-center justify-center rounded-full bg-ink text-sm font-bold text-paper">
-                    ⚙
-                </span>
-                <h1 class="font-display mt-4 text-2xl font-bold">New password</h1>
-                <p class="mt-1 text-sm text-ink-soft">Choose a new password for your dashboard.</p>
-            </div>
+    <AuthLayout title="New password" subtitle="Choose a new password for your dashboard.">
+        <form class="space-y-5" @submit.prevent="submit">
+            <ul
+                v-if="problems.length"
+                class="space-y-1 rounded-xl border border-red-500/40 bg-red-500/10 p-3.5 text-sm break-words text-red-500"
+            >
+                <li v-for="(problem, index) in problems" :key="index">{{ problem }}</li>
+            </ul>
 
-            <form class="space-y-4 rounded-3xl border border-line bg-surface p-5 shadow-sm sm:p-6" @submit.prevent="submit">
-                <label class="block">
-                    <span class="mb-1.5 block text-sm font-medium">Email</span>
-                    <input v-model="form.email" type="email" autocomplete="username" required :class="input" />
-                    <span v-if="form.errors.email" class="mt-1 block text-xs wrap-break-word text-red-500">{{ form.errors.email }}</span>
-                </label>
+            <AuthInput v-model="form.email" label="Email" type="email" icon="mail" autocomplete="username" required />
 
-                <label class="block">
-                    <span class="mb-1.5 block text-sm font-medium">New password</span>
-                    <input v-model="form.password" type="password" autocomplete="new-password" required minlength="8" autofocus :class="input" />
-                    <span class="mt-1 block text-xs text-ink-muted">At least 8 characters.</span>
-                    <span v-if="form.errors.password" class="mt-1 block text-xs wrap-break-word text-red-500">{{ form.errors.password }}</span>
-                </label>
+            <AuthInput
+                v-model="form.password"
+                label="New password"
+                type="password"
+                icon="lock"
+                autocomplete="new-password"
+                required
+                autofocus
+                :minlength="8"
+                hint="At least 8 characters."
+            />
 
-                <label class="block">
-                    <span class="mb-1.5 block text-sm font-medium">Confirm new password</span>
-                    <input v-model="form.password_confirmation" type="password" autocomplete="new-password" required :class="input" />
-                </label>
+            <AuthInput
+                v-model="form.password_confirmation"
+                label="Confirm new password"
+                type="password"
+                icon="lock"
+                autocomplete="new-password"
+                required
+            />
 
-                <button
-                    type="submit"
-                    :disabled="form.processing"
-                    class="w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-brand-ink transition hover:opacity-90 disabled:opacity-60"
-                >
-                    {{ form.processing ? 'Saving…' : 'Change password' }}
-                </button>
-            </form>
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-brand-ink shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60"
+            >
+                <span
+                    v-if="form.processing"
+                    class="size-4 animate-spin rounded-full border-2 border-brand-ink/30 border-t-brand-ink"
+                />
+                {{ form.processing ? 'Saving…' : 'Change password' }}
+            </button>
 
-            <p class="mt-6 text-center text-sm">
+            <p class="text-center text-xs text-ink-muted">
+                Link not working?
+                <a href="/admin/forgot-password" class="text-brand underline-offset-4 hover:underline">Request a new one</a>
+                — only the newest email works.
+            </p>
+            <p class="text-center text-sm">
                 <a href="/admin/login" class="text-ink-soft underline-offset-4 hover:text-ink hover:underline">← Back to sign in</a>
             </p>
-        </div>
-    </div>
+        </form>
+    </AuthLayout>
 </template>
