@@ -8,7 +8,7 @@ const loop = [...techStack, ...techStack];
 <template>
     <div class="relative border-y border-line bg-inverse py-5 text-inverse-ink md:py-6" aria-label="Technologies I use">
         <div class="folio-marquee-mask overflow-hidden">
-            <ul class="flex w-max animate-marquee items-center hover:[animation-play-state:paused]">
+            <ul class="flex w-max animate-marquee items-center hover:paused">
                 <li
                     v-for="(tech, i) in loop"
                     :key="`${tech}-${i}`"

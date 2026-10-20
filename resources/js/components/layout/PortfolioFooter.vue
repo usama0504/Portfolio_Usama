@@ -14,7 +14,7 @@ const year = new Date().getFullYear();
         <div class="relative overflow-hidden rounded-[1.75rem] bg-footer text-footer-ink sm:rounded-[2.5rem]">
             <!-- Brand glow -->
             <div
-                class="pointer-events-none absolute -top-32 left-1/2 h-64 w-[36rem] max-w-full -translate-x-1/2 rounded-full opacity-25 blur-[100px]"
+                class="pointer-events-none absolute -top-32 left-1/2 h-64 w-xl max-w-full -translate-x-1/2 rounded-full opacity-25 blur-[100px]"
                 style="background: var(--folio-brand)"
                 aria-hidden="true"
             />
@@ -87,7 +87,7 @@ const year = new Date().getFullYear();
             <!-- Giant wordmark -->
             <div class="relative mt-14 overflow-hidden px-4 select-none md:mt-20" aria-hidden="true">
                 <p
-                    class="folio-display bg-linear-to-b from-footer-ink/90 to-footer-ink/5 bg-clip-text pb-[0.12em] text-center text-[10.5vw] leading-[1] whitespace-nowrap text-transparent xl:text-[9rem]"
+                    class="folio-display bg-linear-to-b from-footer-ink/90 to-footer-ink/5 bg-clip-text pb-[0.12em] text-center text-[10.5vw] leading-none whitespace-nowrap text-transparent xl:text-[9rem]"
                 >
                     {{ personalInfo.name }}
                 </p>
