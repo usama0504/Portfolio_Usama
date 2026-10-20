@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ArrowLeft } from '@lucide/vue';
 import { initials, personalInfo } from '@/data/portfolio';
 
 defineProps<{ title: string; subtitle: string }>();
