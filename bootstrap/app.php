@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance']);
 
+        // Behind ngrok / a hosting proxy the real visitor IP and https come in the X-Forwarded-* headers.
+        // Without this every visitor looks like 127.0.0.1 (breaks visitor counts and spam limits).
+        $middleware->trustProxies(at: '*');
+
         // Dashboard login lives at /admin/login.
         $middleware->redirectGuestsTo('/admin/login');
         $middleware->redirectUsersTo('/admin');

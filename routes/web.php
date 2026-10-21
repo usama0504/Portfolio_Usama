@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\MessageController;
@@ -9,9 +10,11 @@ use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PortfolioController::class, 'show'])->name('home');
+Route::post('/track', [TrackController::class, 'store'])->middleware('throttle:track')->name('track');
 Route::get('/robots.txt', [SeoController::class, 'robots']);
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
 
@@ -45,6 +48,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('content/{section}', [ContentController::class, 'update'])->name('content.update');
         Route::delete('content/{section}', [ContentController::class, 'destroy'])->name('content.destroy');
         Route::post('upload', [UploadController::class, 'store'])->name('upload');
+
+        // Visitor statistics
+        Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
         // Contact-form inbox
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');

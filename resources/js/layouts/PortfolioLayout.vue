@@ -2,6 +2,7 @@
 import { useScroll, useSpring, motion } from 'motion-v';
 import PortfolioFooter from '@/components/layout/PortfolioFooter.vue';
 import PortfolioHeader from '@/components/layout/PortfolioHeader.vue';
+import WhatsAppFab from '@/components/portfolio/WhatsAppFab.vue';
 
 const { scrollYProgress } = useScroll();
 const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
@@ -22,5 +23,6 @@ const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restD
             <slot />
         </main>
         <PortfolioFooter />
+        <WhatsAppFab />
     </div>
 </template>

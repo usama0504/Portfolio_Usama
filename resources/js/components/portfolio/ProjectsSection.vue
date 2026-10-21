@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { motion } from 'motion-v';
+import { track } from '@/lib/track';
 import { ArrowUpRight, Check, ChevronLeft, ChevronRight, ExternalLink, X } from '@lucide/vue';
 import BrandIcon from '@/components/portfolio/BrandIcon.vue';
 import { useReducedMotion } from '@/composables/useReducedMotion';
@@ -21,6 +22,7 @@ const galleryIndex = ref(0);
 const openProject = (p: Project) => {
     galleryIndex.value = 0;
     activeProject.value = p;
+    track('project_view', p.slug);
 };
 
 // Cover image first, then the extra screenshots.
@@ -130,7 +132,7 @@ onUnmounted(() => {
                         <!-- Preview -->
                         <button
                             type="button"
-                            class="group relative order-first block text-left lg:order-none lg:col-span-7"
+                            class="group relative order-first block text-left lg:order-0 lg:col-span-7"
                             :aria-label="`Open case study: ${project.name}`"
                             @click="openProject(project)"
                         >
@@ -140,7 +142,7 @@ onUnmounted(() => {
                                     <span class="folio-browser-dot" />
                                     <span class="folio-browser-dot" />
                                 </div>
-                                <div class="relative aspect-[16/10] overflow-hidden">
+                                <div class="relative aspect-16/10 overflow-hidden">
                                     <img
                                         v-if="project.image"
                                         :src="project.image"
@@ -203,7 +205,7 @@ onUnmounted(() => {
                 :aria-label="activeProject.name"
                 @click.self="closeProject"
             >
-                <div class="relative max-h-[92vh] w-full overflow-y-auto rounded-t-[2rem] border border-line bg-paper sm:max-w-4xl sm:rounded-[2rem]">
+                <div class="relative max-h-[92vh] w-full overflow-y-auto rounded-t-4xl border border-line bg-paper sm:max-w-4xl sm:rounded-4xl">
                     <button
                         class="sticky top-4 z-10 float-right mt-4 mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-ink text-paper transition-transform hover:rotate-90"
                         aria-label="Close"
@@ -219,7 +221,7 @@ onUnmounted(() => {
 
                         <div v-if="images.length" class="mt-8">
                             <div class="relative overflow-hidden rounded-2xl border border-line bg-surface">
-                                <div class="flex aspect-[16/10] items-center justify-center">
+                                <div class="flex aspect-16/10 items-center justify-center">
                                     <img
                                         :key="galleryIndex"
                                         :src="images[galleryIndex]"

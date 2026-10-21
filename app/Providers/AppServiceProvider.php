@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,9 +38,6 @@ class AppServiceProvider extends ServiceProvider
         ]));
 
         $this->configureRateLimiters();
-         if (config('app.env') !== 'local' || request()->header('x-forwarded-proto') == 'https') {
-        URL::forceScheme('https');
-    }
     }
 
     /**
@@ -74,6 +70,11 @@ class AppServiceProvider extends ServiceProvider
                 Limit::perMinute(3)->by($request->ip()),
                 Limit::perDay(20)->by($request->ip()),
             ];
+        });
+
+        // Click reports from the website (project opened, CV downloaded…).
+        RateLimiter::for('track', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
         });
 
         RateLimiter::for('admin-forgot', function (Request $request) {

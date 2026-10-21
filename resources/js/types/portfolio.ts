@@ -91,6 +91,8 @@ export type PersonalInfo = {
     availability?: string;
     photo?: string;
     cv?: string;
+    /** https://wa.me/… link (empty when no number is set) */
+    whatsappUrl?: string;
     socialLinks: SocialLink[];
 };
 
@@ -113,6 +115,9 @@ export type ProfileContent = {
     availability: string;
     photo: string;
     cv: string;
+    /** digits only, with country code, e.g. 923001234567 */
+    whatsapp: string;
+    whatsappMessage: string;
     github: string;
     linkedin: string;
 };
@@ -132,6 +137,21 @@ export type ServiceContent = {
 
 export type ExperienceContent = Omit<ExperienceEntry, 'endDate'> & { endDate: string | null };
 
+export type Testimonial = {
+    name: string;
+    role: string;
+    quote: string;
+    photo?: string;
+};
+
+export type Certificate = {
+    title: string;
+    issuer: string;
+    year: string;
+    image?: string;
+    link?: string;
+};
+
 export type SeoContent = {
     title: string;
     description: string;
@@ -146,6 +166,8 @@ export type SiteContent = {
     skills: SkillCategoryContent[];
     experiences: ExperienceContent[];
     projects: Project[];
+    testimonials: Testimonial[];
+    certificates: Certificate[];
     services: ServiceContent[];
     education: EducationEntry[];
 };

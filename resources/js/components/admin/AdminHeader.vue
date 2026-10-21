@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronDown, User, LogOut } from '@lucide/vue';
+import { ChevronDown, User, LogOut, LayoutDashboard } from '@lucide/vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-defineProps<{ active: 'content' | 'messages' | 'profile' }>();
+defineProps<{ active: 'content' | 'messages' | 'analytics' | 'profile' }>();
 
 const page = usePage();
 const unread = computed(() =>
@@ -64,11 +64,13 @@ const tab =
         >
             <div class="flex min-w-0 items-center gap-3">
                 <span
-                    class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-bold text-paper"
+                    class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white transition-colors dark:bg-slate-100 dark:text-slate-900"
                 >
-                    ⚙
+                    <LayoutDashboard class="h-5 w-5 shrink-0" />
                 </span>
-                <h1 class="truncate font-display text-lg font-bold">
+                <h1
+                    class="truncate font-display text-lg font-bold text-slate-900 dark:text-white"
+                >
                     Dashboard
                 </h1>
             </div>
@@ -104,6 +106,17 @@ const tab =
                     >
                         {{ unread }}
                     </span>
+                </Link>
+                <Link
+                    href="/admin/analytics"
+                    :class="[
+                        tab,
+                        active === 'analytics'
+                            ? 'bg-brand text-brand-ink'
+                            : 'text-ink-soft hover:text-ink',
+                    ]"
+                >
+                    Analytics
                 </Link>
             </nav>
 
@@ -149,10 +162,6 @@ const tab =
                         role="menu"
                         class="absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-2xl border border-line bg-surface shadow-xl"
                     >
-                        <!-- <div class="border-b border-line px-4 py-3">
-                            <p class="truncate text-sm font-semibold text-ink">{{ user?.name || 'Admin' }}</p>
-                            <p class="truncate text-xs text-ink-muted">{{ user?.email }}</p>
-                        </div> -->
                         <Link
                             href="/admin/profile"
                             role="menuitem"

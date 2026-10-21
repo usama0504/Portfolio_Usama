@@ -21,6 +21,8 @@ class ContentController extends Controller
         'skills',
         'experiences',
         'projects',
+        'testimonials',
+        'certificates',
         'services',
         'education',
     ];
@@ -81,9 +83,21 @@ class ContentController extends Controller
                     $data[$key] = $this->tidyPath($data[$key]);
                 }
             }
+
+            if (isset($data['whatsapp'])) {
+                $data['whatsapp'] = $this->tidyPhone($data['whatsapp']);
+            }
         } elseif ($section === 'seo') {
             if (isset($data['image'])) {
                 $data['image'] = $this->tidyPath($data['image']);
+            }
+        } elseif ($section === 'testimonials' || $section === 'certificates') {
+            $key = $section === 'testimonials' ? 'photo' : 'image';
+
+            foreach ($data as $i => $item) {
+                if (is_array($item) && isset($item[$key])) {
+                    $data[$i][$key] = $this->tidyPath($item[$key]);
+                }
             }
         } elseif ($section === 'projects') {
             foreach ($data as $i => $project) {
@@ -102,6 +116,24 @@ class ContentController extends Controller
         }
 
         return $data;
+    }
+
+    /** "0300 1234567", "+92 300 1234567" or "923001234567" → 923001234567 (what wa.me needs). */
+    private function tidyPhone(mixed $value): mixed
+    {
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        $digits = (string) preg_replace('/\D+/', '', $value);
+
+        if (str_starts_with($digits, '00')) {
+            $digits = substr($digits, 2);
+        } elseif (strlen($digits) === 11 && str_starts_with($digits, '0')) {
+            $digits = '92'.substr($digits, 1); // Pakistani local number
+        }
+
+        return $digits;
     }
 
     private function tidyPath(mixed $value): mixed
@@ -132,6 +164,8 @@ class ContentController extends Controller
     {
         return [
             'data.photo' => 'photo',
+            'data.whatsapp' => 'WhatsApp number',
+            'data.*.photo' => 'photo',
             'data.cv' => 'CV file',
             'data.image' => 'share image',
             'data.*.gallery.*' => 'gallery image',
@@ -179,6 +213,8 @@ class ContentController extends Controller
                 'data.availability' => ['nullable', 'string', 'max:120'],
                 'data.photo' => ['nullable', 'string', 'max:300', $url],
                 'data.cv' => ['nullable', 'string', 'max:300', $url],
+                'data.whatsapp' => ['nullable', 'string', 'regex:/^[0-9]{8,15}$/'],
+                'data.whatsappMessage' => ['nullable', 'string', 'max:200'],
                 'data.github' => ['nullable', 'string', 'max:300', $url],
                 'data.linkedin' => ['nullable', 'string', 'max:300', $url],
             ],
@@ -238,6 +274,21 @@ class ContentController extends Controller
                 'data.*.links' => ['present', 'array', 'max:4'],
                 'data.*.links.*.type' => ['required', 'string', 'in:live,repository'],
                 'data.*.links.*.url' => ['required', 'string', 'max:300', $url],
+            ],
+            'testimonials' => [
+                'data' => ['present', 'array', 'max:12'],
+                'data.*.name' => ['required', 'string', 'max:100'],
+                'data.*.role' => ['nullable', 'string', 'max:120'],
+                'data.*.quote' => ['required', 'string', 'max:600'],
+                'data.*.photo' => ['nullable', 'string', 'max:300', $url],
+            ],
+            'certificates' => [
+                'data' => ['present', 'array', 'max:24'],
+                'data.*.title' => ['required', 'string', 'max:150'],
+                'data.*.issuer' => ['nullable', 'string', 'max:120'],
+                'data.*.year' => ['nullable', 'string', 'max:20'],
+                'data.*.image' => ['nullable', 'string', 'max:300', $url],
+                'data.*.link' => ['nullable', 'string', 'max:300', $url],
             ],
             'services' => [
                 'data' => ['present', 'array', 'max:8'],

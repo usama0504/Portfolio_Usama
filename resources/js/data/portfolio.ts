@@ -22,6 +22,8 @@ import type {
     SiteContent,
     SkillCategory,
     Stat,
+    Certificate,
+    Testimonial,
 } from '@/types/portfolio';
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -38,8 +40,10 @@ export const defaultContent: SiteContent = {
         timezone: 'Asia/Karachi',
         email: 'usama.webdev54@gmail.com',
         availability: 'Open to opportunities',
-        photo: '/my_image.png',
+        photo: '/me.png',
         cv: '',
+        whatsapp: '',
+        whatsappMessage: 'Assalam o Alaikum! I saw your portfolio and would like to talk.',
         github: 'https://github.com/usama0504',
         linkedin: '',
     },
@@ -211,6 +215,9 @@ export const defaultContent: SiteContent = {
             links: [{ type: 'repository', url: 'https://github.com/usama0504/Ecommerce-Shop' }],
         },
     ],
+    // Nothing invented here: add real ones from the dashboard (the sections stay hidden while empty).
+    testimonials: [],
+    certificates: [],
     services: [
         {
             title: 'Full-stack web apps',
@@ -291,6 +298,8 @@ export const skillCategories = reactive<SkillCategory[]>([]);
 export const experiences = reactive<ExperienceEntry[]>([]);
 export const projects = reactive<Project[]>([]);
 export const services = reactive<Service[]>([]);
+export const testimonials = reactive<Testimonial[]>([]);
+export const certificates = reactive<Certificate[]>([]);
 export const education = reactive<EducationEntry[]>([]);
 export const pageMetadata = reactive({ title: '', description: '' });
 /** serverContact: contact form posts to this Laravel app (inbox + Gmail). Otherwise it uses FormSubmit. */
@@ -309,6 +318,19 @@ function img(path?: string | null): string | undefined {
     }
 
     return path.startsWith('/') && !path.startsWith('//') ? asset(path) : path;
+}
+
+/** wa.me needs the number as digits only, with country code. */
+function whatsappLink(number?: string | null, message?: string | null): string | undefined {
+    const digits = (number ?? '').replace(/\D+/g, '');
+
+    if (digits.length < 8) {
+        return undefined;
+    }
+
+    const text = (message ?? '').trim();
+
+    return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 }
 
 const blank = (value?: string | null): string | undefined => (value && value.trim() !== '' ? value : undefined);
@@ -334,6 +356,7 @@ export function applyContent(raw?: Partial<SiteContent> | unknown[] | null): voi
         availability: blank(profile.availability),
         photo: img(profile.photo),
         cv: img(profile.cv),
+        whatsappUrl: whatsappLink(profile.whatsapp, profile.whatsappMessage),
         socialLinks: links,
     });
     replace(visibleSocialLinks, links.filter((link) => link.url.trim() !== ''));
@@ -389,6 +412,27 @@ export function applyContent(raw?: Partial<SiteContent> | unknown[] | null): voi
             title: s.title,
             description: s.description,
             icon: iconMap[s.icon] ?? Code2,
+        })),
+    );
+
+    replace(
+        testimonials,
+        pick('testimonials').map((t) => ({
+            name: t.name,
+            role: t.role ?? '',
+            quote: t.quote,
+            photo: img(t.photo),
+        })),
+    );
+
+    replace(
+        certificates,
+        pick('certificates').map((c) => ({
+            title: c.title,
+            issuer: c.issuer ?? '',
+            year: c.year ?? '',
+            image: img(c.image),
+            link: blank(c.link),
         })),
     );
 
