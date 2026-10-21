@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Message extends Model
 {
-    protected $fillable = ['name', 'email', 'subject', 'body', 'ip', 'read_at'];
+    protected $fillable = ['name', 'email', 'subject', 'body', 'ip', 'read_at', 'archived_at'];
 
     protected function casts(): array
     {
         return [
             'read_at' => 'datetime',
+            'archived_at' => 'datetime',
         ];
     }
 
@@ -21,11 +22,11 @@ class Message extends Model
         return $this->hasMany(MessageReply::class)->oldest();
     }
 
-    /** Unread messages; 0 if the table does not exist yet. */
+    /** Unread messages in the inbox (archived ones are not counted); 0 if the table is not ready yet. */
     public static function unreadCount(): int
     {
         try {
-            return static::query()->whereNull('read_at')->count();
+            return static::query()->whereNull('read_at')->whereNull('archived_at')->count();
         } catch (\Throwable) {
             return 0;
         }

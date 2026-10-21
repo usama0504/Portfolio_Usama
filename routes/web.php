@@ -54,8 +54,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Contact-form inbox
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/export', [MessageController::class, 'export'])->name('messages.export');
+        Route::post('messages/read-all', [MessageController::class, 'readAll'])->name('messages.read-all');
         Route::get('messages/{message}', [MessageController::class, 'show'])->name('messages.show');
         Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+        Route::patch('messages/{message}/unread', [MessageController::class, 'markUnread'])->name('messages.unread');
+        Route::patch('messages/{message}/archive', [MessageController::class, 'archive'])->name('messages.archive');
         Route::delete('messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
         // Your account: details + password
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
